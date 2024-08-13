@@ -2,6 +2,11 @@ package entities
 
 import "time"
 
+const (
+	WithDrawal = iota
+	Deposit
+)
+
 type Transaction struct {
 	Id        int64
 	AccountId string

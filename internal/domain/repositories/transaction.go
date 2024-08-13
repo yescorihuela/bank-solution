@@ -1,4 +1,3 @@
 package repositories
 
-type TransactionRepository interface {
-}
+type TransactionRepository interface{}
