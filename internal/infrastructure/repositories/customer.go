@@ -27,12 +27,13 @@ func NewCustomerRepositoryPostgresql(
 }
 
 var insertCustomerQuery = shared.Compact(`
-INSERT INTO 
-customers 
-	(id, name, kind, created_at, updated_at)
-VALUES 
-	($1, $2, $3, $4, $5) 
-RETURNING *`)
+	INSERT INTO 
+	customers 
+		(id, name, kind, created_at, updated_at)
+	VALUES 
+		($1, $2, $3, $4, $5) 
+	RETURNING id, name, kind, created_at, updated_at
+`)
 
 var getCustomerByIdQuery = shared.Compact(`
 	SELECT 
@@ -42,15 +43,23 @@ var getCustomerByIdQuery = shared.Compact(`
 	WHERE id = $1
 `)
 
-func (crp *CustomerRepositoryPostgresql) Insert(ctx context.Context, customer *entities.Customer) error {
+func (crp *CustomerRepositoryPostgresql) Insert(ctx context.Context, customer *entities.Customer) (*models.Customer, error) {
 	crp.logger.Info("Starting CustomerRepositoryPostgresql.Insert method")
-	_, err := crp.db.Exec(ctx, insertCustomerQuery, customer.Id, customer.Name, customer.Kind, customer.CreatedAt, customer.UpdatedAt)
+	customerModel := models.NewCustomerModel()
+	err := crp.db.QueryRow(ctx, insertCustomerQuery, customer.Id, customer.Name, customer.Kind, customer.CreatedAt, customer.UpdatedAt).
+		Scan(
+			&customerModel.Id,
+			&customerModel.Name,
+			&customerModel.Kind,
+			&customerModel.CreatedAt,
+			&customerModel.UpdatedAt,
+		)
 	if err != nil {
 		crp.logger.Error("Failing CustomerRepositoryPostgresql.Insert method")
-		return err
+		return nil, err
 	}
 	crp.logger.Info("CustomerRepositoryPostgresql.Insert method Finished")
-	return nil
+	return &customerModel, nil
 }
 
 func (crp *CustomerRepositoryPostgresql) GetById(ctx context.Context, customerId string) (*models.Customer, error) {

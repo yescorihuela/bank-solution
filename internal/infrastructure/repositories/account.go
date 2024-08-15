@@ -30,8 +30,8 @@ var insertAccountQuery = shared.Compact(`
 	INSERT INTO 
 		accounts(
 			id,
-			kind,
 			customer_id,
+			kind,
 			balance,
 			city,
 			country,
@@ -40,7 +40,16 @@ var insertAccountQuery = shared.Compact(`
 			updated_at
 		)
 	VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)
-	RETURNING *	
+	RETURNING 
+		id,
+		customer_id,
+		kind,
+		balance,
+		city,
+		country,
+		currency,
+		created_at,
+		updated_at
 `)
 
 var getAccountByIdQuery = shared.Compact(`
@@ -53,14 +62,29 @@ var getAccountByIdQuery = shared.Compact(`
 			created_at,
 			updated_at
 	FROM accounts WHERE
-	id = $1 AND customer_id = $2`)
+	id = $1 AND customer_id = $2
+	`)
 
-func (arp *AccountRepositoryPostgresql) Insert(ctx context.Context, account *entities.Account) error {
-	_, err := arp.db.Exec(ctx, insertAccountQuery, account.Id, account.Kind, account.CustomerId, account.Balance, account.City, account.Country, account.Currency, account.CreatedAt, account.UpdatedAt)
+func (arp *AccountRepositoryPostgresql) Insert(ctx context.Context, account *entities.Account) (*models.Account, error) {
+	accountModel := models.NewAccountModel()
+	err := arp.db.
+		QueryRow(ctx, insertAccountQuery, account.Id, account.CustomerId, account.Kind, account.Balance, account.City, account.Country, account.Currency, account.CreatedAt, account.UpdatedAt).
+		Scan(
+			&accountModel.Id,
+			&accountModel.CustomerId,
+			&accountModel.Kind,
+			&accountModel.Balance,
+			&accountModel.City,
+			&accountModel.Country,
+			&accountModel.Currency,
+			&accountModel.CreatedAt,
+			&accountModel.UpdatedAt,
+		)
+
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return &accountModel, nil
 }
 
 func (arp *AccountRepositoryPostgresql) GetById(ctx context.Context, customerId, accountId string) (*models.Account, error) {

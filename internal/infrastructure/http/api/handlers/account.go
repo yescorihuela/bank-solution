@@ -50,12 +50,14 @@ func (ah *AccountHandler) Create(ctx *gin.Context) {
 
 	accountEntity := mappers.FromAccountRequestToEntity(req, customerId)
 
-	err := ah.accountUseCase.Insert(ctx, accountEntity)
+	accountModel, err := ah.accountUseCase.Insert(ctx, accountEntity)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusCreated, nil)
+
+	accountResponse := mappers.FromAccountModelToResponse(accountModel)
+	ctx.JSON(http.StatusCreated, accountResponse)
 }
 
 func (ah *AccountHandler) GetAccountById(ctx *gin.Context) {
@@ -80,4 +82,16 @@ func (ah *AccountHandler) GetAccountById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, accountResponse)
 }
 
-func (ah *AccountHandler) GetLastTransactionsByAccountId(ctx *gin.Context) {}
+func (ah *AccountHandler) GetLastTransactionsByAccountId(ctx *gin.Context) {
+	customerId := ctx.Param("customer_id")
+	accountId := ctx.Param("account_id")
+	validator := validators.NewValidator()
+
+	validator.Check(customerId != "", "customer_id", "customer_id must be an valid url param")
+	validator.Check(accountId != "", "account_id", "account_id must be an valid url param")
+
+	if !validator.Valid() {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": validator.Errors})
+		return
+	}
+}

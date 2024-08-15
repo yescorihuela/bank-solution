@@ -45,12 +45,15 @@ func (ch *CustomerHandler) Create(ctx *gin.Context) {
 
 	customerEntity := mappers.FromCustomerRequestToEntity(req)
 
-	err := ch.customerUseCase.Insert(ctx, customerEntity)
+	customerModel, err := ch.customerUseCase.Insert(ctx, customerEntity)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusCreated, nil)
+
+	customerResponse := mappers.FromCustomerModelToResponse(customerModel)
+
+	ctx.JSON(http.StatusCreated, customerResponse)
 }
 
 func (ch *CustomerHandler) GetByCustomerId(ctx *gin.Context) {

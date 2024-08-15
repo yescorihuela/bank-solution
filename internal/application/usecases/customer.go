@@ -10,7 +10,7 @@ import (
 )
 
 type CustomerUseCase interface {
-	Insert(ctx context.Context, customer *entities.Customer) error
+	Insert(ctx context.Context, customer *entities.Customer) (*models.Customer, error)
 	GetById(ctx context.Context, customerId string) (*models.Customer, error)
 }
 
@@ -35,15 +35,15 @@ func NewCustomerUseCase(
 	}
 }
 
-func (cuc *customerUseCase) Insert(ctx context.Context, customer *entities.Customer) error {
+func (cuc *customerUseCase) Insert(ctx context.Context, customer *entities.Customer) (*models.Customer, error) {
 	cuc.logger.Info("Starting customerUseCase.Insert method")
-	err := cuc.customerRepository.Insert(ctx, customer)
+	customerModel, err := cuc.customerRepository.Insert(ctx, customer)
 	if err != nil {
 		cuc.logger.Error("Error during access to customerRepository in customerUseCase.Insert method")
-		return err
+		return nil, err
 	}
 	cuc.logger.Info("customerUseCase.Insert executed successfully")
-	return nil
+	return customerModel, nil
 }
 
 func (cuc *customerUseCase) GetById(ctx context.Context, customerId string) (*models.Customer, error) {

@@ -10,7 +10,7 @@ import (
 )
 
 type AccountUseCase interface {
-	Insert(ctx context.Context, account *entities.Account) error
+	Insert(ctx context.Context, account *entities.Account) (*models.Account, error)
 	GetById(ctx context.Context, customerId, accountId string) (*models.Account, error)
 	GetAccountsByCustomerId(ctx context.Context, customerId string) ([]*models.Account, error)
 }
@@ -36,15 +36,15 @@ func NewAccountUseCase(
 	}
 }
 
-func (auc *accountUseCase) Insert(ctx context.Context, account *entities.Account) error {
+func (auc *accountUseCase) Insert(ctx context.Context, account *entities.Account) (*models.Account, error) {
 	auc.logger.Info("Starting accountUseCase.Insert method")
-	err := auc.accountRepository.Insert(ctx, account)
+	accountModel, err := auc.accountRepository.Insert(ctx, account)
 	if err != nil {
 		auc.logger.Error("Error during access to accountRepository in accountUseCase.Insert method")
-		return err
+		return nil, err
 	}
 	auc.logger.Info("accountUseCase.Insert executed successfully")
-	return nil
+	return accountModel, nil
 }
 
 func (auc *accountUseCase) GetById(ctx context.Context, customerId, accountId string) (*models.Account, error) {

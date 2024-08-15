@@ -8,6 +8,6 @@ import (
 )
 
 type CustomerRepository interface {
-	Insert(ctx context.Context, customer *entities.Customer) error
+	Insert(ctx context.Context, customer *entities.Customer) (*models.Customer, error)
 	GetById(ctx context.Context, customerId string) (*models.Customer, error)
 }

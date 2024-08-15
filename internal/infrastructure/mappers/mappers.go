@@ -82,13 +82,14 @@ func FromCustomerModelToResponse(customer *models.Customer) responses.Customer {
 
 func FromAccountModelToResponse(account *models.Account) responses.Account {
 	return responses.Account{
-		Id:        account.Id,
-		Kind:      account.Kind,
-		Balance:   account.Balance,
-		City:      account.City,
-		Country:   account.Country,
-		Currency:  account.Currency,
-		CreatedAt: account.CreatedAt,
-		UpdatedAt: account.UpdatedAt,
+		Id:         account.Id,
+		CustomerId: account.CustomerId,
+		Kind:       account.Kind,
+		Balance:    account.Balance,
+		City:       account.City,
+		Country:    account.Country,
+		Currency:   account.Currency,
+		CreatedAt:  account.CreatedAt,
+		UpdatedAt:  account.UpdatedAt,
 	}
 }
