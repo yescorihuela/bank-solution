@@ -3,10 +3,15 @@ package models
 import "time"
 
 type Transaction struct {
-	Id        int64     `json:"id"`
+	Id        string    `json:"id"`
 	AccountId string    `json:"account_id"`
-	Kind      string    `json:"kind"`
-	Status    string    `json:"status"`
+	Amount    float64   `json:"amount"`
+	Kind      int       `json:"kind"`
+	Status    int       `json:"status"`
 	City      string    `json:"city"`
 	CreatedAt time.Time `json:"created_at"`
+}
+
+func NewTransaction() Transaction {
+	return Transaction{}
 }

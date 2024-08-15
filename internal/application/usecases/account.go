@@ -12,6 +12,7 @@ import (
 type AccountUseCase interface {
 	Insert(ctx context.Context, account *entities.Account) (*models.Account, error)
 	GetById(ctx context.Context, customerId, accountId string) (*models.Account, error)
+	GetLastTransactionsById(ctx context.Context, lastTransactions int, customerId, accountId string) (*models.Account, error)
 	GetAccountsByCustomerId(ctx context.Context, customerId string) ([]*models.Account, error)
 }
 
@@ -60,4 +61,16 @@ func (auc *accountUseCase) GetById(ctx context.Context, customerId, accountId st
 
 func (auc *accountUseCase) GetAccountsByCustomerId(ctx context.Context, customerId string) ([]*models.Account, error) {
 	return nil, nil
+}
+
+func (auc *accountUseCase) GetLastTransactionsById(ctx context.Context, lastTransactions int, customerId, accountId string) (*models.Account, error) {
+	auc.logger.Info("Starting accountUseCase.GetLastTransactionsById method")
+	accountModel, err := auc.accountRepository.GetAccountWithTransactionsByAccountId(ctx, lastTransactions, customerId, accountId)
+	if err != nil {
+		auc.logger.Errorf("Error during access to accountRepository in accountUseCase.GetLastTransactionsById method %s", err)
+		return nil, err
+	}
+
+	auc.logger.Info("accountUseCase.GetLastTransactionsById executed successfully")
+	return accountModel, nil
 }

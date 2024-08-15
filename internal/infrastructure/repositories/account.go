@@ -65,6 +65,18 @@ var getAccountByIdQuery = shared.Compact(`
 	id = $1 AND customer_id = $2
 	`)
 
+var getTransactionsByAccountId = shared.Compact(`
+		SELECT 
+			t.id as transaction_id, t.amount, t.kind, t.status, t.city, t.created_at 
+		FROM 
+			accounts a 
+		INNER JOIN
+		transactions t 
+			ON(a.id = t.account_id)
+		WHERE t.account_id = $1
+		ORDER BY t.created_at DESC LIMIT $2
+	`)
+
 func (arp *AccountRepositoryPostgresql) Insert(ctx context.Context, account *entities.Account) (*models.Account, error) {
 	accountModel := models.NewAccountModel()
 	err := arp.db.
@@ -110,4 +122,49 @@ func (arp *AccountRepositoryPostgresql) GetById(ctx context.Context, customerId,
 
 func (arp *AccountRepositoryPostgresql) GetAccountsByCustomerId(ctx context.Context, customerId string) ([]*models.Account, error) {
 	return nil, nil
+}
+
+func (arp *AccountRepositoryPostgresql) GetAccountWithTransactionsByAccountId(ctx context.Context, lastTransactions int, customerId, accountId string) (*models.Account, error) {
+	arp.logger.Info("Starting AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountId method")
+	accountModel := models.NewAccountModel()
+	transactionModels := make([]*models.Transaction, 0)
+	err := arp.db.QueryRow(ctx, getAccountByIdQuery, accountId, customerId).Scan(
+		&accountModel.Id,
+		&accountModel.Kind,
+		&accountModel.Balance,
+		&accountModel.City,
+		&accountModel.Country,
+		&accountModel.Currency,
+		&accountModel.CreatedAt,
+		&accountModel.UpdatedAt,
+	)
+	if err != nil {
+		arp.logger.Error("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountId method")
+		return nil, err
+	}
+	resultSet, err := arp.db.Query(ctx, getTransactionsByAccountId, accountId, lastTransactions)
+	if err != nil {
+		arp.logger.Error("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountId method querying transactions")
+		return nil, err
+	}
+
+	for resultSet.Next() {
+		t := models.NewTransaction()
+		err := resultSet.Scan(
+			&t.Id,
+			&t.Amount,
+			&t.Kind,
+			&t.Status,
+			&t.City,
+			&t.CreatedAt,
+		)
+		if err != nil {
+			arp.logger.Error("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountId method fetching transactions rows")
+			return &accountModel, err
+		}
+		transactionModels = append(transactionModels, &t)
+	}
+	accountModel.Transactions = transactionModels
+
+	return &accountModel, nil
 }

@@ -43,6 +43,8 @@ func (app *Application) RegisterRoutes() {
 	v1.POST("/customers/:customer_id/accounts/", app.accountHandler.Create)
 	v1.GET("/customers/:customer_id/accounts/:account_id", app.accountHandler.GetAccountById)
 	v1.GET("/customers/:customer_id/accounts/:account_id/latest_transactions", app.accountHandler.GetLastTransactionsByAccountId)
+	v1.GET("/customers/:customer_id/accounts/:account_id/monthly_excerpt", app.accountHandler.GetLastTransactionsByAccountId)
+
 	v1.POST("/customers/:customer_id/accounts/:account_id/deposit", app.transactionHandler.Deposit)
 	v1.POST("/customers/:customer_id/accounts/:account_id/withdrawl", app.transactionHandler.WithDraw)
 }

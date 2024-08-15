@@ -3,6 +3,8 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -86,6 +88,12 @@ func (ah *AccountHandler) GetLastTransactionsByAccountId(ctx *gin.Context) {
 	customerId := ctx.Param("customer_id")
 	accountId := ctx.Param("account_id")
 	validator := validators.NewValidator()
+	var lastTransactionsNumber int = constants.LAST_TRANSACTIONS_NUMBER_BY_DEFAULT
+	if strings.TrimSpace(ctx.Query("qty_tx")) != "" {
+		n, _ := strconv.Atoi(ctx.Query("qty_tx"))
+		validator.Check(n > 0, "qty_tx", "customer_id must be an positive number into query string param")
+		lastTransactionsNumber = n
+	}
 
 	validator.Check(customerId != "", "customer_id", "customer_id must be an valid url param")
 	validator.Check(accountId != "", "account_id", "account_id must be an valid url param")
@@ -94,4 +102,13 @@ func (ah *AccountHandler) GetLastTransactionsByAccountId(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": validator.Errors})
 		return
 	}
+
+	accountModel, err := ah.accountUseCase.GetLastTransactionsById(ctx, lastTransactionsNumber, customerId, accountId)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"errors": err})
+		return
+	}
+
+	accountResponse := mappers.FromAccountModelWithTransactionsToResponse(accountModel)
+	ctx.JSON(http.StatusOK, accountResponse)
 }
