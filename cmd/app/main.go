@@ -1,19 +1,91 @@
 package main
 
-import "github.com/yescorihuela/bluesoft-bank-solution/internal/shared/utils"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
+	"github.com/yescorihuela/bluesoft-bank-solution/internal/application"
+	"github.com/yescorihuela/bluesoft-bank-solution/internal/application/usecases"
+	"github.com/yescorihuela/bluesoft-bank-solution/internal/infrastructure/databases/postgresql"
+	"github.com/yescorihuela/bluesoft-bank-solution/internal/infrastructure/http/api/handlers"
+	"github.com/yescorihuela/bluesoft-bank-solution/internal/infrastructure/repositories"
+	"github.com/yescorihuela/bluesoft-bank-solution/internal/shared/utils"
+)
 
 func main() {
-	_, err := utils.LoadConfig("../../")
+	config, err := utils.LoadConfig("../../")
 	if err != nil {
 		panic(err)
 	}
+	logger := logrus.New()
+	logger.SetFormatter(&logrus.JSONFormatter{})
 
-	/*
-		db, err := databases.NewPostgresqlDbConnection(config)
-		if err != nil {
-			panic(err)
-		}
-		defer db.Close()
-	*/
+	db, err := postgresql.NewPostgresDBConnection(config)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	pgAccountRepository := repositories.NewAccountRepositoryPostgresql(db, logger)
+	pgCustomerRepository := repositories.NewCustomerRepositoryPostgresql(db, logger)
+	pgTransactionRepository := repositories.NewTransactionRepositoryPostgresql(db, logger)
+
+	// _ = repositories.NewAccountRepositoryPostgresql(db, logger)
+	// _ = repositories.NewCustomerRepositoryPostgresql(db, logger)
+	// _ = repositories.NewTransactionRepositoryPostgresql(db, logger)
+
+	accountUseCase := usecases.NewAccountUseCase(
+		logger,
+		pgAccountRepository,
+		pgCustomerRepository,
+		pgTransactionRepository,
+	)
+
+	customerUseCase := usecases.NewCustomerUseCase(
+		logger,
+		pgAccountRepository,
+		pgCustomerRepository,
+		pgTransactionRepository,
+	)
+
+	transactionUseCase := usecases.NewTransactionUseCase(
+		logger,
+		pgAccountRepository,
+		pgCustomerRepository,
+		pgTransactionRepository,
+	)
+
+	accountHandler := handlers.NewAccountHandler(
+		handlers.AccountHandlerConfig{
+			Logger:         logger,
+			AccountUseCase: accountUseCase,
+		},
+	)
+
+	customerHandler := handlers.NewCustomerHandler(
+		handlers.CustomerHandlerConfig{
+			Logger:          logger,
+			CustomerUseCase: customerUseCase,
+		},
+	)
+
+	transactionHandler := handlers.NewTransactionHandler(
+		handlers.TransactionHandlerConfig{
+			Logger:             logger,
+			TransactionUseCase: transactionUseCase,
+		},
+	)
+
+	app := application.NewApplication(
+		accountHandler,
+		customerHandler,
+		transactionHandler,
+		gin.Default(),
+		logger,
+		config,
+	)
+
+	if err := app.Run(); err != nil {
+		panic(err)
+	}
 
 }

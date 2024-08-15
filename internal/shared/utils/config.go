@@ -5,9 +5,10 @@ import (
 )
 
 type Config struct {
-	AppPort        string `mapstructure:"APP_PORT"`
-	BlueSoftDBDSN  string `mapstructure:"BLUESOFT_DB_DSN"`
-	MigrationsPath string `mapstructure:"MIGRATIONS_PATH"`
+	AppHTTPPort      int    `mapstructure:"APP_HTTP_PORT"`
+	BlueSoftURLDB    string `mapstructure:"BLUESOFT_URL_DB"`
+	MigrationsPath   string `mapstructure:"MIGRATIONS_PATH"`
+	MaxDBConnections int    `mapstructure:"MAX_DB_CONNECTIONS"`
 }
 
 func LoadConfig(path string) (config Config, err error) {

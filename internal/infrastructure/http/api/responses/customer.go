@@ -1,9 +1,17 @@
 package responses
 
-import "github.com/yescorihuela/bluesoft-bank-solution/internal/infrastructure/models"
+import (
+	"time"
+)
 
-type Customer struct{}
+type Customer struct {
+	Id        string    `json:"id"`
+	Name      string    `json:"name"`
+	Kind      int       `json:"kind"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
 
-func NewCustomer(customer *models.Customer) *Customer {
+func NewCustomer() *Customer {
 	return &Customer{}
 }

@@ -3,18 +3,26 @@ package repositories
 import (
 	"context"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/sirupsen/logrus"
 	"github.com/yescorihuela/bluesoft-bank-solution/internal/domain/entities"
 	"github.com/yescorihuela/bluesoft-bank-solution/internal/domain/repositories"
 	"github.com/yescorihuela/bluesoft-bank-solution/internal/infrastructure/models"
 )
 
 type TransactionRepositoryPostgresql struct {
-	db *pgx.Conn
+	db     *pgxpool.Pool
+	logger *logrus.Logger
 }
 
-func NewTransactionRepositoryPostgresql(db *pgx.Conn) repositories.TransactionRepository {
-	return &TransactionRepositoryPostgresql{db: db}
+func NewTransactionRepositoryPostgresql(
+	db *pgxpool.Pool,
+	logger *logrus.Logger,
+) repositories.TransactionRepository {
+	return &TransactionRepositoryPostgresql{
+		db:     db,
+		logger: logger,
+	}
 }
 
 func (trp *TransactionRepositoryPostgresql) Deposit(ctx context.Context, transaction entities.Transaction) (*models.Transaction, error) {

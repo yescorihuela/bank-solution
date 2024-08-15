@@ -4,15 +4,10 @@ import (
 	"time"
 )
 
-const (
-	Individual = iota
-	Organization
-)
-
 type Customer struct {
 	Id        string
 	Name      string
-	Kind      string // enum
+	Kind      int
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

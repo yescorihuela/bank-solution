@@ -4,23 +4,14 @@ import (
 	"time"
 )
 
-const (
-	USD = iota
-	EUR
-	CLP
-	COP
-	MXN
-	ARS
-	CAD
-)
-
 type Account struct {
 	Id         string
+	Kind       int
 	CustomerId string
 	Balance    float64
 	City       string
 	Country    string
-	Currency   string
+	Currency   int
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }

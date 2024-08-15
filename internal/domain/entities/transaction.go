@@ -2,24 +2,14 @@ package entities
 
 import (
 	"time"
-
-	"github.com/oklog/ulid/v2"
 )
-
-const (
-	WithDrawal = iota
-	Deposit
-)
-
-func NewUlid() string {
-	return ulid.Make().String()
-}
 
 type Transaction struct {
-	Id        int64
+	Id        string
 	AccountId string
-	Kind      string
-	Status    string
+	Balance   float64
+	Kind      int
+	Status    int
 	City      string
 	CreatedAt time.Time
 }

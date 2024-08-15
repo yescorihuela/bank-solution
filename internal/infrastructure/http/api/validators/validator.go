@@ -1,4 +1,4 @@
-package validator
+package validators
 
 import (
 	"regexp"
@@ -9,7 +9,7 @@ type Validator struct {
 	Errors map[string]string
 }
 
-func New() *Validator {
+func NewValidator() *Validator {
 	return &Validator{Errors: make(map[string]string)}
 }
 
@@ -23,6 +23,12 @@ func (v *Validator) AddError(key, message string) {
 	}
 }
 
+func (v *Validator) Check(ok bool, key, message string) {
+	if !ok {
+		v.AddError(key, message)
+	}
+}
+
 func AllowedValue[T comparable](value T, allowedValues ...T) bool {
 	return slices.Contains(allowedValues, value)
 }
@@ -30,5 +36,3 @@ func AllowedValue[T comparable](value T, allowedValues ...T) bool {
 func Matches(value string, rx *regexp.Regexp) bool {
 	return rx.MatchString(value)
 }
-
-

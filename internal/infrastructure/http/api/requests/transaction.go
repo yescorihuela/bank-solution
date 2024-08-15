@@ -1,11 +1,11 @@
 package requests
 
-type Transaction struct {
-	Kind   int    `json:"kind"`
-	Status int    `json:"status"`
-	City   string `json:"city"`
+type TransactionRequest struct {
+	Amount float64 `json:"amount"`
+	Kind   int     `json:"kind"`
+	City   string  `json:"city"`
 }
 
-func NewTransaction() *Transaction {
-	return &Transaction{}
+func NewTransaction() *TransactionRequest {
+	return &TransactionRequest{}
 }

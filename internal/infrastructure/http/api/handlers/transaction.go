@@ -8,22 +8,22 @@ import (
 )
 
 type TransactionHandlerConfig struct {
-	logger             *logrus.Logger
-	validator          *validator.Validator
-	transactionUseCase *usecases.TransactionUseCase
+	Logger             *logrus.Logger
+	Validator          *validator.Validator
+	TransactionUseCase usecases.TransactionUseCase
 }
 
 type TransactionHandler struct {
 	logger             *logrus.Logger
 	validator          *validator.Validator
-	transactionUseCase *usecases.TransactionUseCase
+	transactionUseCase usecases.TransactionUseCase
 }
 
 func NewTransactionHandler(cfg TransactionHandlerConfig) *TransactionHandler {
 	return &TransactionHandler{
-		logger:             cfg.logger,
-		validator:          cfg.validator,
-		transactionUseCase: cfg.transactionUseCase,
+		logger:             cfg.Logger,
+		validator:          cfg.Validator,
+		transactionUseCase: cfg.TransactionUseCase,
 	}
 }
 

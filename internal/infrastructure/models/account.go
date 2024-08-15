@@ -5,10 +5,15 @@ import "time"
 type Account struct {
 	Id         string    `json:"id"`
 	CustomerId string    `json:"customer_id"`
+	Kind       int       `json:"kind"`
 	Balance    float64   `json:"balance"`
 	City       string    `json:"citiy"`
 	Country    string    `json:"country"`
-	Currency   string    `json:"currency"`
+	Currency   int       `json:"currency"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
+}
+
+func NewAccountModel() Account {
+	return Account{}
 }

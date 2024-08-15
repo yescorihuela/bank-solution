@@ -5,6 +5,6 @@ type CustomerRequest struct {
 	Kind int    `json:"kind"`
 }
 
-func NewCustomerRequest() *CustomerRequest {
-	return &CustomerRequest{}
+func NewCustomerRequest() CustomerRequest {
+	return CustomerRequest{}
 }

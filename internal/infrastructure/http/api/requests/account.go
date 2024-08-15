@@ -1,12 +1,13 @@
 package requests
 
-type Account struct {
-	Balance  string `json:"balance"`
-	City     string `json:"city"`
-	Country  string `json:"country"`
-	Currency int    `json:"currency"`
+type AccountRequest struct {
+	Balance  float64 `json:"balance"`
+	Kind     int     `json:"kind"`
+	City     string  `json:"city"`
+	Country  string  `json:"country"`
+	Currency int     `json:"currency"`
 }
 
-func NewAccount() *Account {
-	return &Account{}
+func NewAccountRequest() AccountRequest {
+	return AccountRequest{}
 }

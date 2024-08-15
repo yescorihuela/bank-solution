@@ -8,7 +8,7 @@ import (
 )
 
 type AccountRepository interface {
-	Insert(ctx context.Context, account entities.Account) (*models.Account, error)
-	GetById(ctx context.Context, accountId string) (*models.Account, error)
+	Insert(ctx context.Context, account *entities.Account) error
+	GetById(ctx context.Context, customerId, accountId string) (*models.Account, error)
 	GetAccountsByCustomerId(ctx context.Context, customerId string) ([]*models.Account, error)
 }
