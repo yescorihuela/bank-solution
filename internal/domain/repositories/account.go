@@ -12,5 +12,4 @@ type AccountRepository interface {
 	GetById(ctx context.Context, customerId, accountId string) (*models.Account, error)
 	GetAccountWithTransactionsByAccountId(ctx context.Context, lastTransactions int, customerId, accountId string) (*models.Account, error)
 	GetAccountWithTransactionsByAccountIdAndMonth(ctx context.Context, month, year int, customerId, accountId string) (*models.Account, error)
-	GetAccountsByCustomerId(ctx context.Context, customerId string) ([]*models.Account, error)
 }

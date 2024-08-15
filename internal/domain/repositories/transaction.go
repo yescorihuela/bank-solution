@@ -8,6 +8,5 @@ import (
 )
 
 type TransactionRepository interface {
-	Deposit(ctx context.Context, transaction entities.Transaction) (*models.Transaction, error)
-	WithDraw(ctx context.Context, transaction entities.Transaction) (*models.Transaction, error)
+	CreateTransaction(ctx context.Context, transaction entities.Transaction) (*models.Transaction, error)
 }

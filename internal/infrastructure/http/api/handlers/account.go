@@ -90,7 +90,7 @@ func (ah *AccountHandler) GetLastTransactionsByAccountId(ctx *gin.Context) {
 	validator := validators.NewValidator()
 	var lastTransactionsNumber int = constants.LAST_TRANSACTIONS_NUMBER_BY_DEFAULT
 	if strings.TrimSpace(ctx.Query("qty_tx")) != "" {
-		n, _ := strconv.Atoi(ctx.Query("qty_tx"))	
+		n, _ := strconv.Atoi(ctx.Query("qty_tx"))
 		validator.Check(n > 0, "qty_tx", "customer_id must be an positive number into query string param")
 		lastTransactionsNumber = n
 	}
@@ -105,7 +105,7 @@ func (ah *AccountHandler) GetLastTransactionsByAccountId(ctx *gin.Context) {
 
 	accountModel, err := ah.accountUseCase.GetLastTransactionsById(ctx, lastTransactionsNumber, customerId, accountId)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"errors": err})
+		ctx.JSON(http.StatusNotFound, gin.H{"errors": err.Error()})
 		return
 	}
 

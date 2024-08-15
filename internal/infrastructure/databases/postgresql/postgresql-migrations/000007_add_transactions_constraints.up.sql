@@ -1,0 +1,1 @@
+ALTER TABLE transactions ADD CONSTRAINT transaction_amount_check CHECK(amount >= 1);

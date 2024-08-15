@@ -31,7 +31,7 @@ func (ruc reportUseCase) GetTransactionsByCustomers(ctx context.Context, month, 
 	ruc.logger.Info("Starting reportUseCase.GetTransactionsByCustomers method")
 	reportModels, err := ruc.reportRepository.GetTransactionsByCustomers(ctx, month, year)
 	if err != nil {
-		ruc.logger.Error("Error during access to reportUseCase in reportRepository.GetTransactionsByCustomers method")
+		ruc.logger.Errorf("Error during access to reportUseCase in reportRepository.GetTransactionsByCustomers method %s", err)
 		return nil, err
 	}
 	ruc.logger.Info("reportUseCase.GetTransactionsByCustomers executed successfully")

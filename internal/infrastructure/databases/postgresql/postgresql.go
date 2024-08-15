@@ -2,6 +2,7 @@ package postgresql
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -12,10 +13,31 @@ import (
 )
 
 type PGXQueryer interface {
-	Exec(context.Context, string, ...any) (pgconn.CommandTag, error)
-	Query(context.Context, string, ...any) (pgx.Rows, error)
-	QueryRow(context.Context, string, ...any) pgx.Row
-	Prepare(context.Context, string, string) (*pgconn.StatementDescription, error)
+	Exec(context.Context, string, ...interface{}) (pgconn.CommandTag, error)
+	Query(context.Context, string, ...interface{}) (pgx.Rows, error)
+	QueryRow(context.Context, string, ...interface{}) pgx.Row
+}
+
+func WithTX(ctx context.Context, conn *pgxpool.Pool, f func(tx pgx.Tx) error) error {
+	tx, err := conn.BeginTx(ctx, pgx.TxOptions{
+		IsoLevel:   pgx.Serializable,
+		AccessMode: pgx.ReadWrite,
+	})
+	if err != nil {
+		return fmt.Errorf("Begin %w", err)
+	}
+
+	if err := f(tx); err != nil {
+		_ = tx.Rollback(ctx)
+
+		return fmt.Errorf("f %w", err)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return fmt.Errorf("Commit %w", err)
+	}
+
+	return nil
 }
 
 func NewPostgresDBConnection(config utils.Config) (*pgxpool.Pool, error) {

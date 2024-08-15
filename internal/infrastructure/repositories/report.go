@@ -27,7 +27,11 @@ func NewReportRepositoryPostgresql(
 
 var getCustomerByTransactionsQtyMonthly = shared.Compact(`
 	SELECT 
-		COUNT(t.id) as qty_transactions, c.name as customer_name, c.id as customer_id, EXTRACT(year FROM t.created_at::date) as year, EXTRACT(month from t.created_at::date) as month
+		COUNT(t.id) as qty_transactions,
+		c.name as customer_name,
+		c.id as customer_id,
+		EXTRACT(year FROM t.created_at::date) as year,
+		EXTRACT(month from t.created_at::date) as month
 	FROM accounts a 
 	INNER JOIN 
 		transactions t ON(a.id = t.account_id)
@@ -44,7 +48,7 @@ func (rrp *ReportRepositoryPostgresql) GetTransactionsByCustomers(ctx context.Co
 	reportModels := make([]*models.Report, 0)
 	resultSet, err := rrp.db.Query(ctx, getCustomerByTransactionsQtyMonthly, year, month)
 	if err != nil {
-		rrp.logger.Error("Failing ReportRepositoryPostgresql.GetTransactionsByCustomers method querying transactions")
+		rrp.logger.Errorf("Failing ReportRepositoryPostgresql.GetTransactionsByCustomers method querying transactions %s", err)
 		return nil, err
 	}
 
@@ -58,7 +62,7 @@ func (rrp *ReportRepositoryPostgresql) GetTransactionsByCustomers(ctx context.Co
 			&r.Month,
 		)
 		if err != nil {
-			rrp.logger.Error("Failing ReportRepositoryPostgresql.GetTransactionsByCustomers method fetching transactions rows")
+			rrp.logger.Errorf("Failing ReportRepositoryPostgresql.GetTransactionsByCustomers method fetching transactions rows %s", err)
 			return reportModels, err
 		}
 		reportModels = append(reportModels, r)

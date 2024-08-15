@@ -10,10 +10,7 @@ import (
 )
 
 type TransactionUseCase interface {
-	Deposit(ctx context.Context, transaction entities.Transaction) (*models.Transaction, error)
-	WithDraw(ctx context.Context, transaction entities.Transaction) (*models.Transaction, error)
-	GetTransactionsByAccountId(ctx context.Context, accountId string) ([]*models.Transaction, error)
-	GetTransactionByCustomerIdAndOutLimit(ctx context.Context, customerId string, upperLimit float64) ([]*models.Customer, error)
+	CreateTransaction(ctx context.Context, transaction entities.Transaction) (*models.Transaction, error)
 }
 
 type transactionUseCase struct {
@@ -37,18 +34,14 @@ func NewTransactionUseCase(
 	}
 }
 
-func (tuc *transactionUseCase) Deposit(ctx context.Context, transaction entities.Transaction) (*models.Transaction, error) {
-	return nil, nil
-}
+func (tuc *transactionUseCase) CreateTransaction(ctx context.Context, transaction entities.Transaction) (*models.Transaction, error) {
+	tuc.logger.Info("Starting transactionUseCase.Deposit method")
 
-func (tuc *transactionUseCase) WithDraw(ctx context.Context, transaction entities.Transaction) (*models.Transaction, error) {
-	return nil, nil
-}
-
-func (tuc *transactionUseCase) GetTransactionsByAccountId(ctx context.Context, accountId string) ([]*models.Transaction, error) {
-	return nil, nil
-}
-
-func (tuc *transactionUseCase) GetTransactionByCustomerIdAndOutLimit(ctx context.Context, customerId string, upperLimit float64) ([]*models.Customer, error) {
-	return nil, nil
+	transactionModel, err := tuc.transactionRepository.CreateTransaction(ctx, transaction)
+	if err != nil {
+		tuc.logger.Errorf("Failing transactionUseCase.Deposit method %v", err)
+		return nil, err
+	}
+	tuc.logger.Info("Finishing transactionUseCase.Deposit method")
+	return transactionModel, nil
 }

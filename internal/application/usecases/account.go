@@ -14,7 +14,6 @@ type AccountUseCase interface {
 	GetById(ctx context.Context, customerId, accountId string) (*models.Account, error)
 	GetLastTransactionsById(ctx context.Context, lastTransactions int, customerId, accountId string) (*models.Account, error)
 	GetLastTransactionsByAccountIdAndMonth(ctx context.Context, month, year int, customerId, accountId string) (*models.Account, error)
-	GetAccountsByCustomerId(ctx context.Context, customerId string) ([]*models.Account, error)
 }
 
 type accountUseCase struct {
@@ -42,7 +41,7 @@ func (auc *accountUseCase) Insert(ctx context.Context, account *entities.Account
 	auc.logger.Info("Starting accountUseCase.Insert method")
 	accountModel, err := auc.accountRepository.Insert(ctx, account)
 	if err != nil {
-		auc.logger.Error("Error during access to accountRepository in accountUseCase.Insert method")
+		auc.logger.Errorf("Error during access to accountRepository in accountUseCase.Insert method %s", err)
 		return nil, err
 	}
 	auc.logger.Info("accountUseCase.Insert executed successfully")
@@ -53,15 +52,11 @@ func (auc *accountUseCase) GetById(ctx context.Context, customerId, accountId st
 	auc.logger.Info("Starting accountUseCase.GetById method")
 	accountModel, err := auc.accountRepository.GetById(ctx, customerId, accountId)
 	if err != nil {
-		auc.logger.Error("Error during access to accountRepository in accountUseCase.GetById method")
+		auc.logger.Errorf("Error during access to accountRepository in accountUseCase.GetById method %s", err)
 		return nil, err
 	}
 	auc.logger.Info("accountUseCase.GetById executed successfully")
 	return accountModel, nil
-}
-
-func (auc *accountUseCase) GetAccountsByCustomerId(ctx context.Context, customerId string) ([]*models.Account, error) {
-	return nil, nil
 }
 
 func (auc *accountUseCase) GetLastTransactionsById(ctx context.Context, lastTransactions int, customerId, accountId string) (*models.Account, error) {
@@ -71,7 +66,6 @@ func (auc *accountUseCase) GetLastTransactionsById(ctx context.Context, lastTran
 		auc.logger.Errorf("Error during access to accountRepository in accountUseCase.GetLastTransactionsById method %s", err)
 		return nil, err
 	}
-
 	auc.logger.Info("accountUseCase.GetLastTransactionsById executed successfully")
 	return accountModel, nil
 }
@@ -83,7 +77,6 @@ func (auc *accountUseCase) GetLastTransactionsByAccountIdAndMonth(ctx context.Co
 		auc.logger.Errorf("Error during access to accountRepository in accountUseCase.GetLastTransactionsByAccountIdAndMonth method %s", err)
 		return nil, err
 	}
-
 	auc.logger.Info("accountUseCase.GetLastTransactionsByAccountIdAndMonth executed successfully")
 	return accountModel, nil
 }

@@ -48,8 +48,7 @@ func (app *Application) RegisterRoutes() {
 	v1.GET("/customers/:customer_id/accounts/:account_id/latest_transactions", app.accountHandler.GetLastTransactionsByAccountId)
 	v1.GET("/customers/:customer_id/accounts/:account_id/monthly_excerpt", app.accountHandler.GetAccountWithTransactionsByAccountIdAndMonth)
 	v1.GET("/reports/transactions_by_customer", app.reportHandler.GetMonthlyTransactionsByCustomers)
-	v1.POST("/customers/:customer_id/accounts/:account_id/deposit", app.transactionHandler.Deposit)
-	v1.POST("/customers/:customer_id/accounts/:account_id/withdrawl", app.transactionHandler.WithDraw)
+	v1.POST("/customers/:customer_id/accounts/:account_id/transaction", app.transactionHandler.CreateTransaction)
 }
 
 func (app *Application) Bootstrapping() {

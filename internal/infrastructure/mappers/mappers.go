@@ -1,6 +1,7 @@
 package mappers
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/yescorihuela/bluesoft-bank-solution/internal/domain/constants"
@@ -57,15 +58,17 @@ func FromAccountRequestToEntity(account requests.AccountRequest, customerId stri
 	}
 }
 
-func FromTransactionRequestToEntity(transaction requests.TransactionRequest, customerId, accountId string) *entities.Transaction {
+func FromTransactionRequestToEntity(transaction requests.TransactionRequest, accountId string) *entities.Transaction {
 	id := shared.GenerateUlid()
 	now := time.Now().UTC()
+	kind, _ := strconv.Atoi(transaction.Kind)
 	return &entities.Transaction{
 		Id:        id,
 		AccountId: accountId,
-		Kind:      transaction.Kind,
-		Balance:   transaction.Amount,
+		Amount:    transaction.Amount,
+		Kind:      kind,
 		Status:    constants.Pending,
+		City:      transaction.City,
 		CreatedAt: now,
 	}
 }

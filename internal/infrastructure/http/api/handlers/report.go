@@ -54,7 +54,7 @@ func (rh *ReportHandler) GetMonthlyTransactionsByCustomers(ctx *gin.Context) {
 	fmt.Println("month, year => ", month, year)
 	reportModel, err := rh.reportUseCase.GetTransactionsByCustomers(ctx, month, year)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"errors": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"errors": err.Error()})
 		return
 	}
 	reportResponse := mappers.FromReportModelToResponse(reportModel)

@@ -39,7 +39,7 @@ func (cuc *customerUseCase) Insert(ctx context.Context, customer *entities.Custo
 	cuc.logger.Info("Starting customerUseCase.Insert method")
 	customerModel, err := cuc.customerRepository.Insert(ctx, customer)
 	if err != nil {
-		cuc.logger.Error("Error during access to customerRepository in customerUseCase.Insert method")
+		cuc.logger.Errorf("Error during access to customerRepository in customerUseCase.Insert method %s", err)
 		return nil, err
 	}
 	cuc.logger.Info("customerUseCase.Insert executed successfully")
@@ -50,7 +50,7 @@ func (cuc *customerUseCase) GetById(ctx context.Context, customerId string) (*mo
 	cuc.logger.Info("Starting customerUseCase.GetById method")
 	customerModel, err := cuc.customerRepository.GetById(ctx, customerId)
 	if err != nil {
-		cuc.logger.Error("Error during access to customerRepository in customerUseCase.GetById method")
+		cuc.logger.Errorf("Error during access to customerRepository in customerUseCase.GetById method %s", err)
 		return nil, err
 	}
 	cuc.logger.Info("customerUseCase.GetById executed successfully")

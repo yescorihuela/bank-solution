@@ -134,10 +134,6 @@ func (arp *AccountRepositoryPostgresql) GetById(ctx context.Context, customerId,
 	return &accountModel, nil
 }
 
-func (arp *AccountRepositoryPostgresql) GetAccountsByCustomerId(ctx context.Context, customerId string) ([]*models.Account, error) {
-	return nil, nil
-}
-
 func (arp *AccountRepositoryPostgresql) GetAccountWithTransactionsByAccountId(ctx context.Context, lastTransactions int, customerId, accountId string) (*models.Account, error) {
 	arp.logger.Info("Starting AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountId method")
 	accountModel := models.NewAccountModel()
@@ -153,12 +149,12 @@ func (arp *AccountRepositoryPostgresql) GetAccountWithTransactionsByAccountId(ct
 		&accountModel.UpdatedAt,
 	)
 	if err != nil {
-		arp.logger.Error("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountId method")
+		arp.logger.Errorf("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountId method %s", err)
 		return nil, err
 	}
 	resultSet, err := arp.db.Query(ctx, getTransactionsByAccountId, accountId, lastTransactions)
 	if err != nil {
-		arp.logger.Error("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountId method querying transactions")
+		arp.logger.Errorf("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountId method querying transactions %s", err)
 		return nil, err
 	}
 
@@ -173,7 +169,7 @@ func (arp *AccountRepositoryPostgresql) GetAccountWithTransactionsByAccountId(ct
 			&t.CreatedAt,
 		)
 		if err != nil {
-			arp.logger.Error("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountId method fetching transactions rows")
+			arp.logger.Errorf("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountId method fetching transactions rows %s", err)
 			return &accountModel, err
 		}
 		transactionModels = append(transactionModels, &t)
@@ -188,6 +184,7 @@ func (arp *AccountRepositoryPostgresql) GetAccountWithTransactionsByAccountIdAnd
 	arp.logger.Info("Starting AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountIdAndMonth method")
 	accountModel := models.NewAccountModel()
 	transactionModels := make([]*models.Transaction, 0)
+
 	err := arp.db.QueryRow(ctx, getAccountByIdQuery, accountId, customerId).Scan(
 		&accountModel.Id,
 		&accountModel.Kind,
@@ -199,13 +196,13 @@ func (arp *AccountRepositoryPostgresql) GetAccountWithTransactionsByAccountIdAnd
 		&accountModel.UpdatedAt,
 	)
 	if err != nil {
-		arp.logger.Error("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountIdAndMonth method")
+		arp.logger.Errorf("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountIdAndMonth method %s", err)
 		return nil, err
 	}
 
 	resultSet, err := arp.db.Query(ctx, getTransactionByAccountIdAndMonth, accountId, month, year)
 	if err != nil {
-		arp.logger.Error("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountIdAndMonth method querying transactions")
+		arp.logger.Errorf("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountIdAndMonth method querying transactions %s", err)
 		return nil, err
 	}
 
@@ -220,7 +217,7 @@ func (arp *AccountRepositoryPostgresql) GetAccountWithTransactionsByAccountIdAnd
 			&t.CreatedAt,
 		)
 		if err != nil {
-			arp.logger.Error("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountIdAndMonth method fetching transactions rows")
+			arp.logger.Errorf("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountIdAndMonth method fetching transactions rows %s", err)
 			return &accountModel, err
 		}
 		transactionModels = append(transactionModels, &t)

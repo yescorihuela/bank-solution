@@ -43,8 +43,6 @@ var getCustomerByIdQuery = shared.Compact(`
 	WHERE id = $1
 `)
 
-
-
 func (crp *CustomerRepositoryPostgresql) Insert(ctx context.Context, customer *entities.Customer) (*models.Customer, error) {
 	crp.logger.Info("Starting CustomerRepositoryPostgresql.Insert method")
 	customerModel := models.NewCustomerModel()
@@ -57,7 +55,7 @@ func (crp *CustomerRepositoryPostgresql) Insert(ctx context.Context, customer *e
 			&customerModel.UpdatedAt,
 		)
 	if err != nil {
-		crp.logger.Error("Failing CustomerRepositoryPostgresql.Insert method")
+		crp.logger.Errorf("Failing CustomerRepositoryPostgresql.Insert method %s", err)
 		return nil, err
 	}
 	crp.logger.Info("CustomerRepositoryPostgresql.Insert method Finished")
@@ -75,11 +73,9 @@ func (crp *CustomerRepositoryPostgresql) GetById(ctx context.Context, customerId
 		&customerModel.UpdatedAt,
 	)
 	if err != nil {
-		crp.logger.Error("Failing CustomerRepositoryPostgresql.GetById method")
+		crp.logger.Errorf("Failing CustomerRepositoryPostgresql.GetById method %s", err)
 		return nil, err
 	}
 	crp.logger.Info("CustomerRepositoryPostgresql.GetById method Finished")
 	return &customerModel, nil
 }
-
-

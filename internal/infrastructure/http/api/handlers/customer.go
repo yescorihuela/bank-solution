@@ -32,14 +32,14 @@ func (ch *CustomerHandler) Create(ctx *gin.Context) {
 	req := requests.NewCustomerRequest()
 	validator := validators.NewValidator()
 	if err := ctx.BindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"errors": err.Error()})
 		return
 	}
 
 	validator.Check(req.Name != "", "name", "name field is required")
 	validator.Check(validators.AllowedValue[int](req.Kind, []int{constants.Individual, constants.Organization}...), "kind", "the kind of customer must be either Individual(0) or Organization(1)")
 	if !validator.Valid() {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": validator.Errors})
+		ctx.JSON(http.StatusBadRequest, gin.H{"errors": validator.Errors})
 		return
 	}
 
@@ -61,13 +61,13 @@ func (ch *CustomerHandler) GetByCustomerId(ctx *gin.Context) {
 	validator := validators.NewValidator()
 	validator.Check(customerId != "", "customer_id", "customer_id must be an valid url param")
 	if !validator.Valid() {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": validator.Errors})
+		ctx.JSON(http.StatusBadRequest, gin.H{"errors": validator.Errors})
 		return
 	}
 	customerModel, err := ch.customerUseCase.GetById(ctx, customerId)
 
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusNotFound, gin.H{"errors": err.Error()})
 		return
 	}
 

@@ -1,0 +1,1 @@
+ALTER TABLE accounts DROP CONSTRAINT IF EXISTS account_balance_check;
