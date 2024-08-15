@@ -28,10 +28,7 @@ func main() {
 	pgAccountRepository := repositories.NewAccountRepositoryPostgresql(db, logger)
 	pgCustomerRepository := repositories.NewCustomerRepositoryPostgresql(db, logger)
 	pgTransactionRepository := repositories.NewTransactionRepositoryPostgresql(db, logger)
-
-	// _ = repositories.NewAccountRepositoryPostgresql(db, logger)
-	// _ = repositories.NewCustomerRepositoryPostgresql(db, logger)
-	// _ = repositories.NewTransactionRepositoryPostgresql(db, logger)
+	pgReportRepository := repositories.NewReportRepositoryPostgresql(db, logger)
 
 	accountUseCase := usecases.NewAccountUseCase(
 		logger,
@@ -52,6 +49,11 @@ func main() {
 		pgAccountRepository,
 		pgCustomerRepository,
 		pgTransactionRepository,
+	)
+
+	reportUseCase := usecases.NewReportUseCase(
+		logger,
+		pgReportRepository,
 	)
 
 	accountHandler := handlers.NewAccountHandler(
@@ -75,10 +77,18 @@ func main() {
 		},
 	)
 
+	reportHandler := handlers.NewReportHandler(
+		handlers.ReportHandlerConfig{
+			Logger:        logger,
+			ReportUseCase: reportUseCase,
+		},
+	)
+
 	app := application.NewApplication(
 		accountHandler,
 		customerHandler,
 		transactionHandler,
+		reportHandler,
 		gin.Default(),
 		logger,
 		config,

@@ -90,7 +90,7 @@ func (ah *AccountHandler) GetLastTransactionsByAccountId(ctx *gin.Context) {
 	validator := validators.NewValidator()
 	var lastTransactionsNumber int = constants.LAST_TRANSACTIONS_NUMBER_BY_DEFAULT
 	if strings.TrimSpace(ctx.Query("qty_tx")) != "" {
-		n, _ := strconv.Atoi(ctx.Query("qty_tx"))
+		n, _ := strconv.Atoi(ctx.Query("qty_tx"))	
 		validator.Check(n > 0, "qty_tx", "customer_id must be an positive number into query string param")
 		lastTransactionsNumber = n
 	}
@@ -104,6 +104,44 @@ func (ah *AccountHandler) GetLastTransactionsByAccountId(ctx *gin.Context) {
 	}
 
 	accountModel, err := ah.accountUseCase.GetLastTransactionsById(ctx, lastTransactionsNumber, customerId, accountId)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"errors": err})
+		return
+	}
+
+	accountResponse := mappers.FromAccountModelWithTransactionsToResponse(accountModel)
+	ctx.JSON(http.StatusOK, accountResponse)
+}
+
+func (ah *AccountHandler) GetAccountWithTransactionsByAccountIdAndMonth(ctx *gin.Context) {
+	customerId := ctx.Param("customer_id")
+	accountId := ctx.Param("account_id")
+
+	validator := validators.NewValidator()
+
+	var (
+		month int
+		year  int
+	)
+	if strings.TrimSpace(ctx.Query("month")) != "" {
+		month, _ = strconv.Atoi(ctx.Query("month"))
+		validator.Check(month > 0, "month", "month must be an positive number into query string param")
+	}
+
+	if strings.TrimSpace(ctx.Query("year")) != "" {
+		year, _ = strconv.Atoi(ctx.Query("year"))
+		validator.Check(year > 0, "year", "year must be an positive number into query string param")
+	}
+
+	validator.Check(customerId != "", "customer_id", "customer_id must be an valid url param")
+	validator.Check(accountId != "", "account_id", "account_id must be an valid url param")
+
+	if !validator.Valid() {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": validator.Errors})
+		return
+	}
+
+	accountModel, err := ah.accountUseCase.GetLastTransactionsByAccountIdAndMonth(ctx, month, year, customerId, accountId)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"errors": err})
 		return

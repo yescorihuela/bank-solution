@@ -77,6 +77,20 @@ var getTransactionsByAccountId = shared.Compact(`
 		ORDER BY t.created_at DESC LIMIT $2
 	`)
 
+var getTransactionByAccountIdAndMonth = shared.Compact(`
+		SELECT 
+			t.id as transaction_id, t.amount, t.kind, t.status, t.city, t.created_at 
+		FROM 
+			accounts a 
+		INNER JOIN
+		transactions t 
+			ON(a.id = t.account_id)
+		WHERE t.account_id = $1 AND 
+		EXTRACT(month from t.created_at::date) = $2 AND
+		EXTRACT(year from t.created_at::date) = $3
+		ORDER BY t.created_at DESC
+`)
+
 func (arp *AccountRepositoryPostgresql) Insert(ctx context.Context, account *entities.Account) (*models.Account, error) {
 	accountModel := models.NewAccountModel()
 	err := arp.db.
@@ -160,6 +174,53 @@ func (arp *AccountRepositoryPostgresql) GetAccountWithTransactionsByAccountId(ct
 		)
 		if err != nil {
 			arp.logger.Error("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountId method fetching transactions rows")
+			return &accountModel, err
+		}
+		transactionModels = append(transactionModels, &t)
+	}
+	accountModel.Transactions = transactionModels
+
+	return &accountModel, nil
+}
+
+func (arp *AccountRepositoryPostgresql) GetAccountWithTransactionsByAccountIdAndMonth(ctx context.Context, month, year int, customerId, accountId string) (*models.Account, error) {
+
+	arp.logger.Info("Starting AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountIdAndMonth method")
+	accountModel := models.NewAccountModel()
+	transactionModels := make([]*models.Transaction, 0)
+	err := arp.db.QueryRow(ctx, getAccountByIdQuery, accountId, customerId).Scan(
+		&accountModel.Id,
+		&accountModel.Kind,
+		&accountModel.Balance,
+		&accountModel.City,
+		&accountModel.Country,
+		&accountModel.Currency,
+		&accountModel.CreatedAt,
+		&accountModel.UpdatedAt,
+	)
+	if err != nil {
+		arp.logger.Error("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountIdAndMonth method")
+		return nil, err
+	}
+
+	resultSet, err := arp.db.Query(ctx, getTransactionByAccountIdAndMonth, accountId, month, year)
+	if err != nil {
+		arp.logger.Error("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountIdAndMonth method querying transactions")
+		return nil, err
+	}
+
+	for resultSet.Next() {
+		t := models.NewTransaction()
+		err := resultSet.Scan(
+			&t.Id,
+			&t.Amount,
+			&t.Kind,
+			&t.Status,
+			&t.City,
+			&t.CreatedAt,
+		)
+		if err != nil {
+			arp.logger.Error("Failing AccountRepositoryPostgresql.GetAccountWithTransactionsByAccountIdAndMonth method fetching transactions rows")
 			return &accountModel, err
 		}
 		transactionModels = append(transactionModels, &t)

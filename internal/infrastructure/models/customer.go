@@ -13,3 +13,5 @@ type Customer struct {
 func NewCustomerModel() Customer {
 	return Customer{}
 }
+
+

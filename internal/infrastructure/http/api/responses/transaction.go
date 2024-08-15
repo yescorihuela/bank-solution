@@ -4,7 +4,7 @@ import "time"
 
 type Transaction struct {
 	Id        string    `json:"id"`
-	AccountId string    `json:"account_id"`
+	AccountId string    `json:"account_id,omitempty"`
 	Amount    float64   `json:"amount"`
 	Kind      int       `json:"kind"`
 	Status    int       `json:"status"`

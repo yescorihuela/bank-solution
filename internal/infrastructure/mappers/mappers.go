@@ -1,7 +1,6 @@
 package mappers
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/yescorihuela/bluesoft-bank-solution/internal/domain/constants"
@@ -108,7 +107,6 @@ func FromTransactionModelToResponse(transaction *models.Transaction) responses.T
 }
 
 func FromAccountModelWithTransactionsToResponse(account *models.Account) responses.Account {
-	fmt.Printf("%+v\n", account)
 	transactionsResponse := make([]*responses.Transaction, 0)
 	if account.Transactions != nil {
 		for _, transaction := range account.Transactions {
@@ -129,4 +127,18 @@ func FromAccountModelWithTransactionsToResponse(account *models.Account) respons
 		CreatedAt:    account.CreatedAt,
 		UpdatedAt:    account.UpdatedAt,
 	}
+}
+
+func FromReportModelToResponse(reportQtyTX []*models.Report) []responses.Report {
+	reportResponse := make([]responses.Report, 0)
+	for _, report := range reportQtyTX {
+		r := responses.NewReport()
+		r.QtyTransactions = report.QtyTransactions
+		r.CustomerId = report.CustomerId
+		r.CustomerName = report.CustomerName
+		r.Month = report.Month
+		r.Year = report.Year
+		reportResponse = append(reportResponse, r)
+	}
+	return reportResponse
 }

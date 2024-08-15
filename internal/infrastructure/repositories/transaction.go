@@ -32,11 +32,3 @@ func (trp *TransactionRepositoryPostgresql) Deposit(ctx context.Context, transac
 func (trp *TransactionRepositoryPostgresql) WithDraw(ctx context.Context, transaction entities.Transaction) (*models.Transaction, error) {
 	return nil, nil
 }
-
-func (trp *TransactionRepositoryPostgresql) GetTransactionsByAccountId(ctx context.Context, accountId string) ([]*models.Transaction, error) {
-	return nil, nil
-}
-
-func (trp *TransactionRepositoryPostgresql) GetTransactionByCustomerIdAndOutLimit(ctx context.Context, customerId string, upperLimit float64) ([]*models.Customer, error) {
-	return nil, nil
-}

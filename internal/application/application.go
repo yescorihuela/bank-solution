@@ -13,6 +13,7 @@ type Application struct {
 	accountHandler     *handlers.AccountHandler
 	customerHandler    *handlers.CustomerHandler
 	transactionHandler *handlers.TransactionHandler
+	reportHandler      *handlers.ReportHandler
 	router             *gin.Engine
 	config             utils.Config
 	logger             *logrus.Logger
@@ -22,6 +23,7 @@ func NewApplication(
 	accountHandler *handlers.AccountHandler,
 	customerHandler *handlers.CustomerHandler,
 	transactionHandler *handlers.TransactionHandler,
+	reportHandler *handlers.ReportHandler,
 	router *gin.Engine,
 	logger *logrus.Logger,
 	config utils.Config,
@@ -30,6 +32,7 @@ func NewApplication(
 		accountHandler:     accountHandler,
 		customerHandler:    customerHandler,
 		transactionHandler: transactionHandler,
+		reportHandler:      reportHandler,
 		router:             router,
 		logger:             logger,
 		config:             config,
@@ -43,8 +46,8 @@ func (app *Application) RegisterRoutes() {
 	v1.POST("/customers/:customer_id/accounts/", app.accountHandler.Create)
 	v1.GET("/customers/:customer_id/accounts/:account_id", app.accountHandler.GetAccountById)
 	v1.GET("/customers/:customer_id/accounts/:account_id/latest_transactions", app.accountHandler.GetLastTransactionsByAccountId)
-	v1.GET("/customers/:customer_id/accounts/:account_id/monthly_excerpt", app.accountHandler.GetLastTransactionsByAccountId)
-
+	v1.GET("/customers/:customer_id/accounts/:account_id/monthly_excerpt", app.accountHandler.GetAccountWithTransactionsByAccountIdAndMonth)
+	v1.GET("/reports/transactions_by_customer", app.reportHandler.GetMonthlyTransactionsByCustomers)
 	v1.POST("/customers/:customer_id/accounts/:account_id/deposit", app.transactionHandler.Deposit)
 	v1.POST("/customers/:customer_id/accounts/:account_id/withdrawl", app.transactionHandler.WithDraw)
 }

@@ -13,6 +13,7 @@ type AccountUseCase interface {
 	Insert(ctx context.Context, account *entities.Account) (*models.Account, error)
 	GetById(ctx context.Context, customerId, accountId string) (*models.Account, error)
 	GetLastTransactionsById(ctx context.Context, lastTransactions int, customerId, accountId string) (*models.Account, error)
+	GetLastTransactionsByAccountIdAndMonth(ctx context.Context, month, year int, customerId, accountId string) (*models.Account, error)
 	GetAccountsByCustomerId(ctx context.Context, customerId string) ([]*models.Account, error)
 }
 
@@ -72,5 +73,17 @@ func (auc *accountUseCase) GetLastTransactionsById(ctx context.Context, lastTran
 	}
 
 	auc.logger.Info("accountUseCase.GetLastTransactionsById executed successfully")
+	return accountModel, nil
+}
+
+func (auc *accountUseCase) GetLastTransactionsByAccountIdAndMonth(ctx context.Context, month, year int, customerId, accountId string) (*models.Account, error) {
+	auc.logger.Info("Starting accountUseCase.GetLastTransactionsByAccountIdAndMonth method")
+	accountModel, err := auc.accountRepository.GetAccountWithTransactionsByAccountIdAndMonth(ctx, month, year, customerId, accountId)
+	if err != nil {
+		auc.logger.Errorf("Error during access to accountRepository in accountUseCase.GetLastTransactionsByAccountIdAndMonth method %s", err)
+		return nil, err
+	}
+
+	auc.logger.Info("accountUseCase.GetLastTransactionsByAccountIdAndMonth executed successfully")
 	return accountModel, nil
 }
