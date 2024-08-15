@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -51,7 +50,7 @@ func (rh *ReportHandler) GetMonthlyTransactionsByCustomers(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": validator.Errors})
 		return
 	}
-	fmt.Println("month, year => ", month, year)
+
 	reportModel, err := rh.reportUseCase.GetTransactionsByCustomers(ctx, month, year)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"errors": err.Error()})
@@ -59,4 +58,37 @@ func (rh *ReportHandler) GetMonthlyTransactionsByCustomers(ctx *gin.Context) {
 	}
 	reportResponse := mappers.FromReportModelToResponse(reportModel)
 	ctx.JSON(http.StatusOK, gin.H{"data": reportResponse})
+}
+
+func (rh *ReportHandler) GetBigTransactionsOutSide(ctx *gin.Context) {
+	var (
+		year  int = time.Now().Year()
+		month int = int(time.Now().Month())
+	)
+	validator := validators.NewValidator()
+
+	if strings.TrimSpace(ctx.Query("month")) != "" {
+		month, _ = strconv.Atoi(ctx.Query("month"))
+		validator.Check(month > 0, "month", "month must be an positive number into query string param")
+	}
+
+	if strings.TrimSpace(ctx.Query("year")) != "" {
+		year, _ = strconv.Atoi(ctx.Query("year"))
+		validator.Check(year > 0, "year", "year must be an positive number into query string param")
+	}
+
+	if !validator.Valid() {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": validator.Errors})
+		return
+	}
+
+	reportBigTransactionsModel, err := rh.reportUseCase.GetBigTransactionsOutSide(ctx, month, year)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"errors": err.Error()})
+		return
+	}
+
+	reportBigTransactionsResponse := mappers.FromReportBigTransactionsModelToResponse(reportBigTransactionsModel)
+
+	ctx.JSON(http.StatusOK, gin.H{"data": reportBigTransactionsResponse})
 }

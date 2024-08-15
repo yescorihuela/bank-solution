@@ -10,6 +10,7 @@ import (
 
 type ReportUseCase interface {
 	GetTransactionsByCustomers(ctx context.Context, month, year int) ([]*models.Report, error)
+	GetBigTransactionsOutSide(ctx context.Context, month, year int) ([]*models.ReportBigOperation, error)
 }
 
 type reportUseCase struct {
@@ -31,9 +32,20 @@ func (ruc reportUseCase) GetTransactionsByCustomers(ctx context.Context, month, 
 	ruc.logger.Info("Starting reportUseCase.GetTransactionsByCustomers method")
 	reportModels, err := ruc.reportRepository.GetTransactionsByCustomers(ctx, month, year)
 	if err != nil {
-		ruc.logger.Errorf("Error during access to reportUseCase in reportRepository.GetTransactionsByCustomers method %s", err)
+		ruc.logger.Errorf("Error during access to reportUseCase in reportRepository.GetTransactionsByCustomers method %s", err.Error())
 		return nil, err
 	}
 	ruc.logger.Info("reportUseCase.GetTransactionsByCustomers executed successfully")
+	return reportModels, nil
+}
+
+func (ruc reportUseCase) GetBigTransactionsOutSide(ctx context.Context, month, year int) ([]*models.ReportBigOperation, error) {
+	ruc.logger.Info("Starting reportUseCase.GetBigTransactionsOutSide method")
+	reportModels, err := ruc.reportRepository.GetBigTransactionsOutSide(ctx, month, year)
+	if err != nil {
+		ruc.logger.Errorf("Error during access to reportUseCase in reportRepository.GetBigTransactionsOutSide method => %s", err.Error())
+		return nil, err
+	}
+	ruc.logger.Info("reportUseCase.GetBigTransactionsOutSide executed successfully")
 	return reportModels, nil
 }

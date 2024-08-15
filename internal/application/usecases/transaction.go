@@ -10,7 +10,7 @@ import (
 )
 
 type TransactionUseCase interface {
-	CreateTransaction(ctx context.Context, transaction entities.Transaction) (*models.Transaction, error)
+	CreateTransaction(ctx context.Context, transaction entities.Transaction, customerId string) (*models.Transaction, error)
 }
 
 type transactionUseCase struct {
@@ -34,14 +34,14 @@ func NewTransactionUseCase(
 	}
 }
 
-func (tuc *transactionUseCase) CreateTransaction(ctx context.Context, transaction entities.Transaction) (*models.Transaction, error) {
-	tuc.logger.Info("Starting transactionUseCase.Deposit method")
+func (tuc *transactionUseCase) CreateTransaction(ctx context.Context, transaction entities.Transaction, customerId string) (*models.Transaction, error) {
+	tuc.logger.Info("Starting transactionUseCase.CreateTransaction method")
 
-	transactionModel, err := tuc.transactionRepository.CreateTransaction(ctx, transaction)
+	transactionModel, err := tuc.transactionRepository.CreateTransaction(ctx, transaction, customerId)
 	if err != nil {
-		tuc.logger.Errorf("Failing transactionUseCase.Deposit method %v", err)
+		tuc.logger.Errorf("Failing transactionUseCase.CreateTransaction method %v", err)
 		return nil, err
 	}
-	tuc.logger.Info("Finishing transactionUseCase.Deposit method")
+	tuc.logger.Info("Finishing transactionUseCase.CreateTransaction method")
 	return transactionModel, nil
 }

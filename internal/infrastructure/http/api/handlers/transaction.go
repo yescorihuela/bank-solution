@@ -62,7 +62,7 @@ func (th *TransactionHandler) CreateTransaction(ctx *gin.Context) {
 
 	transactionEntity := mappers.FromTransactionRequestToEntity(req, accountId)
 
-	transactionModel, err := th.transactionUseCase.CreateTransaction(ctx, *transactionEntity)
+	transactionModel, err := th.transactionUseCase.CreateTransaction(ctx, *transactionEntity, customerId)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"errors": err.Error()})

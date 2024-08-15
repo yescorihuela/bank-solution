@@ -8,4 +8,5 @@ import (
 
 type ReportRepository interface {
 	GetTransactionsByCustomers(ctx context.Context, month, year int) ([]*models.Report, error)
+	GetBigTransactionsOutSide(ctx context.Context, month, year int) ([]*models.ReportBigOperation, error)
 }

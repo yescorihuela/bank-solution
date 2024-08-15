@@ -143,7 +143,7 @@ func (ah *AccountHandler) GetAccountWithTransactionsByAccountIdAndMonth(ctx *gin
 
 	accountModel, err := ah.accountUseCase.GetLastTransactionsByAccountIdAndMonth(ctx, month, year, customerId, accountId)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"errors": err})
+		ctx.JSON(http.StatusNotFound, gin.H{"errors": err.Error()})
 		return
 	}
 

@@ -145,3 +145,18 @@ func FromReportModelToResponse(reportQtyTX []*models.Report) []responses.Report 
 	}
 	return reportResponse
 }
+
+func FromReportBigTransactionsModelToResponse(reportBigTransactions []*models.ReportBigOperation) []responses.ReportBigOperation {
+	reportResponse := make([]responses.ReportBigOperation, 0)
+	for _, report := range reportBigTransactions {
+		r := responses.NewReportBigOperation()
+		r.CustomerName = report.CustomerName
+		r.CustomerId = report.CustomerId
+		r.CreatedAt = report.CreatedAt
+		r.City = report.City
+		r.OriginalCity = report.OriginalCity
+		r.Amount = report.Amount
+		reportResponse = append(reportResponse, r)
+	}
+	return reportResponse
+}

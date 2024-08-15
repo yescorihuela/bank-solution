@@ -8,5 +8,5 @@ import (
 )
 
 type TransactionRepository interface {
-	CreateTransaction(ctx context.Context, transaction entities.Transaction) (*models.Transaction, error)
+	CreateTransaction(ctx context.Context, transaction entities.Transaction, customerId string) (*models.Transaction, error)
 }
