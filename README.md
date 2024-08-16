@@ -26,6 +26,7 @@ This exercise has a simple database design, but effective for acomplising the ob
 - Although it is a relatively simple exercise, I developed it based (obviously) in my own experience but incorporating some stuff learned from books too: In this case it was **Hexagonal Architecture (HA)** also known as **Ports and Adapters**, the intensive usage of **SOLID principles** brings to me to make this decision, especially for Dependency Injection principle and Liskov Substituion principle.
 - **Why don't use MVC**? Is a good question, the answer is really easy: I think that HA flows more natural and give more abstraction and isolation of the components than MVC, this means less coupling among the layers too. Although HA is agnostic, the implementation with Go is wonderful, there are many readings about that.
 - The usage of PostgreSQL is related to ease to usage, but I wanted at first time use 2 database to switch and test the repository pattern (the second one db keep in mind was MongoDB).
+- **Regarding to two or more concurrent operations, I applied a way of Unit of Work (UoW) pattern with only one transaction and I've configured the isolation level to maximum level: the tradeoff is the max isolation for execution of transactions for less performance execution with a high volumen of queries to DB**
 
 
 ![hexagonal architecture in project](hexagonal-architecture-products.svg)
