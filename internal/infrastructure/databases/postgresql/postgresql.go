@@ -2,10 +2,14 @@ package postgresql
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"time"
 
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -54,6 +58,29 @@ func NewPostgresDBConnection(config utils.Config) (*pgxpool.Pool, error) {
 	cfg.MaxConnLifetime = 60 * time.Minute
 
 	cfg.ConnConfig.LogLevel = pgx.LogLevelDebug
-
+	err = migrateTables(config)
+	if err != nil {
+		return nil, err
+	}
 	return pgxpool.ConnectConfig(context.Background(), cfg)
+}
+
+func migrateTables(config utils.Config) error {
+	psql, err := sql.Open("postgres", config.BlueSoftURLDB)
+	if err != nil {
+		panic(err)
+	}
+	migrationDriver, err := postgres.WithInstance(psql, &postgres.Config{})
+	if err != nil {
+		panic(err)
+	}
+
+	migrator, err := migrate.NewWithDatabaseInstance(fmt.Sprintf("file://%s", config.MigrationsPath), "postgres", migrationDriver)
+	if err != nil {
+		panic(err)
+	}
+	if err = migrator.Up(); err != nil && err != migrate.ErrNoChange {
+		panic(err)
+	}
+	return nil
 }
