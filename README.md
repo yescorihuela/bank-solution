@@ -38,20 +38,14 @@ At the moment of writting this document, the complete app hasn't been dockerized
 $ docker compose up -d # Watch out, we're running this docker compose in background
 ```
 
-## 
+**Running the app**
 
-
-
-
-Run the app
 
 ```bash
+# This command includes the migrations routine.
 $ cd cmd/app
 $ go run main.go # The app will run on port 8080
 ```
-
-
-
 
 ## WIP
   1. Write tests.
