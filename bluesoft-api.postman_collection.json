@@ -1,0 +1,287 @@
+{
+	"info": {
+		"_postman_id": "fb1ac6cb-ee82-4a12-add5-9a4bb55ddf4b",
+		"name": "bluesoft-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "317303"
+	},
+	"item": [
+		{
+			"name": "localhost:8080/api/v1/customers/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Uriah Heep\",\n    \"kind\": 0\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/customers/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/api/v1/customers/211728197492459",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/v1/customers/905931432708048",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						"905931432708048"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/api/v1/customers/211728197492459/accounts/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"balance\": 10000,\n    \"kind\": 1,\n    \"city\": \"Caracas\",\n    \"Country\": \"Venezuela\",\n    \"currency\": 0\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/customers/905931432708048/accounts/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						"905931432708048",
+						"accounts",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/api/v1/customers/211728197492459/accounts/f382b248-4100-43cb-8f11-310ddc2d4f93",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/v1/customers/905931432708048/accounts/59124c5d-1ea3-4995-9b80-f26b92ce38ba",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						"905931432708048",
+						"accounts",
+						"59124c5d-1ea3-4995-9b80-f26b92ce38ba"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/api/v1/customers/682499271818105/accounts/f03e3aed-5020-4650-869d-1beee66afb3f/latest_transactions?qty_tx=3",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/v1/customers/905931432708048/accounts/59124c5d-1ea3-4995-9b80-f26b92ce38ba/latest_transactions?qty_tx=10",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						"905931432708048",
+						"accounts",
+						"59124c5d-1ea3-4995-9b80-f26b92ce38ba",
+						"latest_transactions"
+					],
+					"query": [
+						{
+							"key": "qty_tx",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/api/v1/customers/682499271818105/accounts/f03e3aed-5020-4650-869d-1beee66afb3f/monthly_excerpt?month=8&year=2024",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"balance\": 1000,\n    \"kind\": 1,\n    \"city\": \"La Paz\",\n    \"Country\": \"Bolivia\",\n    \"currency\": 2\n}\n\n/*\n\n{\n\tBalance  float64 `json:\"balance\"`\n\tKind     int     `json:\"kind\"`\n\tCity     string  `json:\"city\"`\n\tCountry  string  `json:\"country\"`\n\tCurrency int     `json:\"currency\"`\n}\n*/",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/customers/905931432708048/accounts/59124c5d-1ea3-4995-9b80-f26b92ce38ba/monthly_excerpt?month=8&year=2024",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						"905931432708048",
+						"accounts",
+						"59124c5d-1ea3-4995-9b80-f26b92ce38ba",
+						"monthly_excerpt"
+					],
+					"query": [
+						{
+							"key": "month",
+							"value": "8"
+						},
+						{
+							"key": "year",
+							"value": "2024"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/api/v1/reports/transactions_by_customer?month=8&year=2024",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/v1/reports/big_transactions_outside_by_customer?month=8&year=2024",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"reports",
+						"big_transactions_outside_by_customer"
+					],
+					"query": [
+						{
+							"key": "month",
+							"value": "8"
+						},
+						{
+							"key": "year",
+							"value": "2024"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/api/v1/customers/211728197492459/accounts/f382b248-4100-43cb-8f11-310ddc2d4f93/transaction",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"amount\": 1000500,\n    \"city\": \"Quito\",\n    \"kind\": \"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/customers/905931432708048/accounts/59124c5d-1ea3-4995-9b80-f26b92ce38ba/transaction",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						"905931432708048",
+						"accounts",
+						"59124c5d-1ea3-4995-9b80-f26b92ce38ba",
+						"transaction"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/api/v1/reports/transactions_by_customer?month=8&year=2024",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/v1/reports/big_transactions_outside_by_customer?month=8&year=2024",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"reports",
+						"big_transactions_outside_by_customer"
+					],
+					"query": [
+						{
+							"key": "month",
+							"value": "8"
+						},
+						{
+							"key": "year",
+							"value": "2024"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
