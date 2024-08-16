@@ -2,9 +2,11 @@ package repositories
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/sirupsen/logrus"
+	"github.com/yescorihuela/bluesoft-bank-solution/internal/domain/constants"
 	"github.com/yescorihuela/bluesoft-bank-solution/internal/domain/entities"
 	"github.com/yescorihuela/bluesoft-bank-solution/internal/domain/repositories"
 	"github.com/yescorihuela/bluesoft-bank-solution/internal/infrastructure/models"
@@ -91,9 +93,26 @@ var getTransactionByAccountIdAndMonth = shared.Compact(`
 		ORDER BY t.created_at DESC
 `)
 
+var checkValidCurrent = shared.Compact(`
+	SELECT kind from customers WHERE id = $1
+`)
+
 func (arp *AccountRepositoryPostgresql) Insert(ctx context.Context, account *entities.Account) (*models.Account, error) {
 	accountModel := models.NewAccountModel()
-	err := arp.db.
+	var kind int
+
+	err := arp.db.QueryRow(ctx, checkValidCurrent, account.CustomerId).Scan(&kind)
+	if err != nil {
+		return nil, err
+	}
+
+	if kind == constants.Individual && account.Kind == constants.CurrentAccount {
+		return nil, fmt.Errorf("the current accounts only work for organizations")
+	} else if kind == constants.Organization && account.Kind == constants.SavingAccout {
+		return nil, fmt.Errorf("the saving accounts only work for individuals")
+	}
+
+	err = arp.db.
 		QueryRow(ctx, insertAccountQuery, account.Id, account.CustomerId, account.Kind, account.Balance, account.City, account.Country, account.Currency, account.CreatedAt, account.UpdatedAt).
 		Scan(
 			&accountModel.Id,

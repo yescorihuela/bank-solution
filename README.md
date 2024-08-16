@@ -47,6 +47,14 @@ $ cd cmd/app
 $ go run main.go # The app will run on port 8080
 ```
 
+**Attention**
+There's a Postman collection on which you can create customers, accounts and add new transactions.
+[Let me leave it here for you!](bluesoft-api.postman_collection.json)
+
+Please pay much attention to order of each tab.
+
+
+
 ## WIP
   1. Write tests.
   2. Results pagination.

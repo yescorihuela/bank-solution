@@ -32,7 +32,8 @@
 						"customers",
 						""
 					]
-				}
+				},
+				"description": "kind = 0 for individuals\n\nkind = 1 for organizations"
 			},
 			"response": []
 		},
@@ -85,7 +86,8 @@
 						"accounts",
 						""
 					]
-				}
+				},
+				"description": "kind 0 = saving account\n\nkind 1 = current account"
 			},
 			"response": []
 		},
