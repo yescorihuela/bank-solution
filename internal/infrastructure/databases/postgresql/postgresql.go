@@ -22,7 +22,7 @@ type PGXQueryer interface {
 	QueryRow(context.Context, string, ...interface{}) pgx.Row
 }
 
-func WithTX(ctx context.Context, conn *pgxpool.Pool, f func(sTx pgx.Tx) error) error {
+func WithTX(ctx context.Context, conn *pgxpool.Pool, f func(sTx *pgx.Tx) error) error {
 	tx, err := conn.BeginTx(ctx, pgx.TxOptions{
 		IsoLevel:   pgx.Serializable,
 		AccessMode: pgx.ReadWrite,
@@ -31,7 +31,7 @@ func WithTX(ctx context.Context, conn *pgxpool.Pool, f func(sTx pgx.Tx) error) e
 		return fmt.Errorf("error on begin %w", err)
 	}
 
-	if err := f(tx); err != nil {
+	if err := f(&tx); err != nil {
 		_ = tx.Rollback(ctx)
 
 		return fmt.Errorf("rolling back transaction %w", err)

@@ -28,11 +28,11 @@ type transactionQueries struct {
 }
 
 func NewTransactionQueries(
-	db pgx.Tx,
+	db *pgx.Tx,
 	logger *logrus.Logger,
 ) *transactionQueries {
 	return &transactionQueries{
-		db:     db,
+		db:     *db,
 		logger: logger,
 		now:    time.Now,
 	}
@@ -103,7 +103,7 @@ func (trp *TransactionRepositoryPostgresql) CreateTransaction(ctx context.Contex
 	transactionModel := models.NewTransaction()
 	trp.logger.Info("Starting TransactionRepositoryPostgresql.CreateTransaction method")
 
-	err := postgresql.WithTX(ctx, trp.db, func(tx pgx.Tx) error {
+	err := postgresql.WithTX(ctx, trp.db, func(tx *pgx.Tx) error {
 		trp.logger.Info("Starting transaction WithTX method...")
 
 		q := NewTransactionQueries(tx, trp.logger)
