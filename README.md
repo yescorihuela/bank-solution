@@ -14,7 +14,7 @@ This development has been created for evaluation purposes. It was designed under
 - Docker Compose 2.28.1
 - PostgreSQL 16.3
 
-## Database design
+## Database design
 
 This exercise has a simple database design, but effective for acomplising the objectives required:
 
